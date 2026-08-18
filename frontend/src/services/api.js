@@ -1,148 +1,177 @@
 /**
- * Dhwani Thalas & HastaVidya - API Service Layer
- * Connects to Spring Boot backend via Vite proxy (/api → http://localhost:8080)
- *
- * Endpoints:
- *   GET /api/saptatalas       → 7 Sapta Talas
- *   GET /api/saputalas        → 5 Jatis (Sapu Talas)
- *   GET /api/rhythms          → 35 Rhythm combinations (tala × jati)
- *   GET /api/asamyukta-hastas → 28 Single-Hand Mudras (Abhinaya Darpana)
- *   GET /api/samyukta-hastas  → 24 Double-Hand Mudras (Abhinaya Darpana)
- *   GET /api/shirobhedas      → 9 Head Movements (Abhinaya Darpana)
- *   GET /api/drishti-bhedas   → 9 Eye Movements (Abhinaya Darpana)
- *   GET /api/greeva-bhedas    → 4 Neck Movements (Abhinaya Darpana)
- *   GET /api/bhru-bhedas      → 7 Eyebrow Movements (Abhinaya Darpana / Natyashastra)
- *   GET /api/pada-bhedas      → 7 Feet & Leg Postures (Abhinaya Darpana)
+ * Dhwani Thalas & HastaVidya - Resilient API Service Layer
+ * Connects to Spring Boot backend (/api → http://localhost:8080) when available,
+ * and seamlessly provides built-in canonical datasets when hosted statically on Vercel!
  */
+
+import {
+  ASAMYUKTA_HASTAS,
+  SAMYUKTA_HASTAS,
+  SHIROBHEDAS,
+  DRISHTI_BHEDAS,
+  GREEVA_BHEDAS,
+  BHRU_BHEDAS,
+  PADA_BHEDAS
+} from '../data/shastras';
+import { TALAS, JATIS, calculateAksharas } from '../data/talas';
 
 const BASE_URL = import.meta.env.VITE_API_URL
   ? `${import.meta.env.VITE_API_URL.replace(/\/$/, '')}/api`
   : '/api';
 
 /**
- * Fetches all 7 Sapta Talas from the backend.
- * @returns {Promise<Array>} Array of { id, name, description, structure }
+ * Generates all 35 Tala × Jati rhythm combinations for fallback
+ */
+function getRhythmsFallback() {
+  const result = [];
+  let id = 1;
+  for (const tala of TALAS) {
+    for (const jati of JATIS) {
+      const aksharas = calculateAksharas(tala, jati);
+      result.push({
+        id: id++,
+        saptatala: { id: tala.id, name: tala.name },
+        saputala: { id: jati.id, name: jati.name },
+        counting: aksharas,
+        notation: `${tala.symbol.replace(/I/g, `I${jati.count}`)} (${aksharas} Aksharas)`
+      });
+    }
+  }
+  return result;
+}
+
+/**
+ * Fetches all 7 Sapta Talas from the backend, with instant fallback.
  */
 export async function fetchSaptaTalas() {
-  const response = await fetch(`${BASE_URL}/saptatalas`);
-  if (!response.ok) {
-    throw new Error(`Failed to fetch Sapta Talas: ${response.status} ${response.statusText}`);
+  try {
+    const response = await fetch(`${BASE_URL}/saptatalas`);
+    if (response.ok) return await response.json();
+  } catch (e) {
+    // Graceful fallback for standalone Vercel hosting
   }
-  return response.json();
+  return TALAS.map((t, idx) => ({ id: idx + 1, name: t.name, description: t.description, structure: t.symbol }));
 }
 
 /**
- * Fetches all 5 Jatis (Sapu Talas) from the backend.
- * @returns {Promise<Array>} Array of { id, name, count }
+ * Fetches all 5 Jatis (Sapu Talas) from the backend, with instant fallback.
  */
 export async function fetchJatis() {
-  const response = await fetch(`${BASE_URL}/saputalas`);
-  if (!response.ok) {
-    throw new Error(`Failed to fetch Jatis: ${response.status} ${response.statusText}`);
+  try {
+    const response = await fetch(`${BASE_URL}/saputalas`);
+    if (response.ok) return await response.json();
+  } catch (e) {
+    // Graceful fallback for standalone Vercel hosting
   }
-  return response.json();
+  return JATIS.map((j, idx) => ({ id: idx + 1, name: j.name, count: j.count }));
 }
 
 /**
- * Fetches all 35 Rhythm combinations from the backend.
- * Each rhythm has a saptatala, saputala, counting (beat count) and notation.
- * @returns {Promise<Array>} Array of { id, saptatala, saputala, counting, notation }
+ * Fetches all 35 Rhythm combinations from the backend, with instant fallback.
  */
 export async function fetchRhythms() {
-  const response = await fetch(`${BASE_URL}/rhythms`);
-  if (!response.ok) {
-    throw new Error(`Failed to fetch Rhythms: ${response.status} ${response.statusText}`);
+  try {
+    const response = await fetch(`${BASE_URL}/rhythms`);
+    if (response.ok) return await response.json();
+  } catch (e) {
+    // Graceful fallback for standalone Vercel hosting
   }
-  return response.json();
+  return getRhythmsFallback();
 }
 
 /**
- * Fetches 28 Asamyukta Hastas (Single-Hand Mudras) from the backend.
- * @returns {Promise<Array>} Array of { id, name, description, usage }
+ * Fetches 28 Asamyukta Hastas (Single-Hand Mudras) with instant fallback.
  */
 export async function fetchAsamyuktaHastas() {
-  const response = await fetch(`${BASE_URL}/asamyukta-hastas`);
-  if (!response.ok) {
-    throw new Error(`Failed to fetch Asamyukta Hastas: ${response.status} ${response.statusText}`);
+  try {
+    const response = await fetch(`${BASE_URL}/asamyukta-hastas`);
+    if (response.ok) return await response.json();
+  } catch (e) {
+    // Graceful fallback for standalone Vercel hosting
   }
-  return response.json();
+  return ASAMYUKTA_HASTAS;
 }
 
 /**
- * Fetches 24 Samyukta Hastas (Double-Hand Mudras) from the backend.
- * @returns {Promise<Array>} Array of { id, name, description, usage }
+ * Fetches 24 Samyukta Hastas (Double-Hand Mudras) with instant fallback.
  */
 export async function fetchSamyuktaHastas() {
-  const response = await fetch(`${BASE_URL}/samyukta-hastas`);
-  if (!response.ok) {
-    throw new Error(`Failed to fetch Samyukta Hastas: ${response.status} ${response.statusText}`);
+  try {
+    const response = await fetch(`${BASE_URL}/samyukta-hastas`);
+    if (response.ok) return await response.json();
+  } catch (e) {
+    // Graceful fallback for standalone Vercel hosting
   }
-  return response.json();
+  return SAMYUKTA_HASTAS;
 }
 
 /**
- * Fetches 9 Shirobhedas (Head Movements) from the backend.
- * @returns {Promise<Array>} Array of { id, name, description, usage }
+ * Fetches 9 Shirobhedas (Head Movements) with instant fallback.
  */
 export async function fetchShirobhedas() {
-  const response = await fetch(`${BASE_URL}/shirobhedas`);
-  if (!response.ok) {
-    throw new Error(`Failed to fetch Shirobhedas: ${response.status} ${response.statusText}`);
+  try {
+    const response = await fetch(`${BASE_URL}/shirobhedas`);
+    if (response.ok) return await response.json();
+  } catch (e) {
+    // Graceful fallback for standalone Vercel hosting
   }
-  return response.json();
+  return SHIROBHEDAS;
 }
 
 /**
- * Fetches 9 Drishti Bhedas (Eye Movements) from the backend.
- * @returns {Promise<Array>} Array of { id, name, description, usage }
+ * Fetches 9 Drishti Bhedas (Eye Movements) with instant fallback.
  */
 export async function fetchDrishtiBhedas() {
-  const response = await fetch(`${BASE_URL}/drishti-bhedas`);
-  if (!response.ok) {
-    throw new Error(`Failed to fetch Drishti Bhedas: ${response.status} ${response.statusText}`);
+  try {
+    const response = await fetch(`${BASE_URL}/drishti-bhedas`);
+    if (response.ok) return await response.json();
+  } catch (e) {
+    // Graceful fallback for standalone Vercel hosting
   }
-  return response.json();
+  return DRISHTI_BHEDAS;
 }
 
 /**
- * Fetches 4 Greeva Bhedas (Neck Movements) from the backend.
- * @returns {Promise<Array>} Array of { id, name, description, usage }
+ * Fetches 9 Greeva Bhedas (Neck Movements) with instant fallback.
  */
 export async function fetchGreevaBhedas() {
-  const response = await fetch(`${BASE_URL}/greeva-bhedas`);
-  if (!response.ok) {
-    throw new Error(`Failed to fetch Greeva Bhedas: ${response.status} ${response.statusText}`);
+  try {
+    const response = await fetch(`${BASE_URL}/greeva-bhedas`);
+    if (response.ok) return await response.json();
+  } catch (e) {
+    // Graceful fallback for standalone Vercel hosting
   }
-  return response.json();
+  return GREEVA_BHEDAS;
 }
 
 /**
- * Fetches 7 Bhru Bhedas (Eyebrow Movements) from the backend.
- * @returns {Promise<Array>} Array of { id, name, description, usage }
+ * Fetches 9 Bhru Bhedas (Eyebrow Movements) with instant fallback.
  */
 export async function fetchBhruBhedas() {
-  const response = await fetch(`${BASE_URL}/bhru-bhedas`);
-  if (!response.ok) {
-    throw new Error(`Failed to fetch Bhru Bhedas: ${response.status} ${response.statusText}`);
+  try {
+    const response = await fetch(`${BASE_URL}/bhru-bhedas`);
+    if (response.ok) return await response.json();
+  } catch (e) {
+    // Graceful fallback for standalone Vercel hosting
   }
-  return response.json();
+  return BHRU_BHEDAS;
 }
 
 /**
- * Fetches 7 Pada Bhedas (Feet & Leg Postures) from the backend.
- * @returns {Promise<Array>} Array of { id, name, description, usage }
+ * Fetches 9 Pada Bhedas (Feet & Leg Postures) with instant fallback.
  */
 export async function fetchPadaBhedas() {
-  const response = await fetch(`${BASE_URL}/pada-bhedas`);
-  if (!response.ok) {
-    throw new Error(`Failed to fetch Pada Bhedas: ${response.status} ${response.statusText}`);
+  try {
+    const response = await fetch(`${BASE_URL}/pada-bhedas`);
+    if (response.ok) return await response.json();
+  } catch (e) {
+    // Graceful fallback for standalone Vercel hosting
   }
-  return response.json();
+  return PADA_BHEDAS;
 }
 
 /**
  * Fetches all Mudra and Bheda datasets in parallel.
- * @returns {Promise<{ asamyukta: Array, samyukta: Array, shirobheda: Array, drishti: Array, greeva: Array, bhru: Array, pada: Array }>}
  */
 export async function fetchAllMudrasAndBhedas() {
   const [asamyukta, samyukta, shirobheda, drishti, greeva, bhru, pada] = await Promise.all([
@@ -158,13 +187,7 @@ export async function fetchAllMudrasAndBhedas() {
 }
 
 /**
- * Fetches a specific rhythm's beat count for a given tala name and jati name.
- * Looks up the matching rhythm from the pre-fetched rhythms array.
- *
- * @param {Array}  rhythms   - All rhythms from fetchRhythms()
- * @param {string} talaName  - Backend tala name (e.g. "Thiriputa")
- * @param {string} jatiName  - Backend jati name (e.g. "Chatusra")
- * @returns {{ counting: number, notation: string } | null}
+ * Finds matching rhythm calculation from fetched rhythms.
  */
 export function findRhythm(rhythms, talaName, jatiName) {
   if (!rhythms || !talaName || !jatiName) return null;
