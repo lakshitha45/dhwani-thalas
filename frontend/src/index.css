@@ -1,0 +1,233 @@
+@import "tailwindcss";
+
+@layer base {
+  :root {
+    --stage-bg: #0c0d12;
+    --gold-primary: #C9A24B;
+    --gold-light: #E5C365;
+    --gold-dark: #8F6F26;
+    --card-surface: #14151D;
+    --card-surface-hover: #1A1C27;
+
+    /* HastaVidya Silk & Temple Theme Tokens */
+    --kumkum-bg: #140307;
+    --kumkum-surface: #22060C;
+    --kumkum-card: #2B0810;
+    --kumkum-border: #4A121E;
+    --turmeric-gold: #E5A93C;
+    --turmeric-light: #F7D070;
+    --turmeric-dark: #A86B12;
+    --kanchipuram-teal: #0D9488;
+    --teal-glow: rgba(13, 148, 136, 0.35);
+  }
+
+  body {
+    margin: 0;
+    padding: 0;
+    background-color: var(--stage-bg);
+    color: #E2E8F0;
+    font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* Font classes */
+  .font-marcellus {
+    font-family: 'Marcellus', 'Cormorant Garamond', Georgia, serif;
+  }
+
+  .font-cormorant {
+    font-family: 'Cormorant Garamond', Georgia, serif;
+  }
+
+  .font-serif-display {
+    font-family: 'Fraunces', 'Cormorant Garamond', Georgia, serif;
+  }
+
+  .font-serif-sub {
+    font-family: 'Cormorant Garamond', Georgia, serif;
+  }
+
+  .font-sans-body {
+    font-family: 'Inter', 'Outfit', sans-serif;
+  }
+
+  .font-mono-numeric {
+    font-family: 'JetBrains Mono', ui-monospace, SFMono-Regular, monospace;
+  }
+}
+
+/* Stage Lighting Vignette Background for Dhwani Thalas */
+.stage-lighting {
+  background: 
+    radial-gradient(ellipse 80% 50% at 50% -10%, rgba(201, 162, 75, 0.09), transparent 70%),
+    radial-gradient(ellipse 60% 40% at 50% 30%, rgba(201, 162, 75, 0.04), transparent 60%),
+    radial-gradient(circle at 50% 100%, rgba(15, 17, 28, 0.8), #090A0E);
+}
+
+/* HastaVidya Temple Maroon & Silk Stage Background */
+.temple-maroon-stage {
+  background: 
+    radial-gradient(ellipse 70% 45% at 50% -5%, rgba(229, 169, 60, 0.14), transparent 65%),
+    radial-gradient(ellipse 60% 50% at 85% 30%, rgba(13, 148, 136, 0.08), transparent 60%),
+    radial-gradient(ellipse 60% 50% at 15% 45%, rgba(186, 28, 62, 0.18), transparent 60%),
+    radial-gradient(circle at 50% 100%, #100205, #170408);
+}
+
+/* Silk Sheen Texture Overlay */
+.silk-sheen-glow {
+  background: radial-gradient(circle at 50% 0%, rgba(229, 169, 60, 0.12) 0%, rgba(43, 8, 16, 0.6) 70%, transparent 100%);
+}
+
+/* Custom Scrollbar */
+.scrollbar-thin::-webkit-scrollbar {
+  height: 4px;
+}
+.scrollbar-thin::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.02);
+  border-radius: 4px;
+}
+.scrollbar-thin::-webkit-scrollbar-thumb {
+  background: rgba(229, 169, 60, 0.3);
+  border-radius: 4px;
+}
+.scrollbar-thin::-webkit-scrollbar-thumb:hover {
+  background: rgba(229, 169, 60, 0.55);
+}
+
+/* Glow effects */
+.gold-glow {
+  box-shadow: 0 0 25px -4px rgba(201, 162, 75, 0.22), 0 0 10px -2px rgba(201, 162, 75, 0.15);
+}
+
+.gold-glow-subtle {
+  box-shadow: 0 0 15px -3px rgba(201, 162, 75, 0.15);
+}
+
+.turmeric-glow {
+  box-shadow: 0 0 22px rgba(229, 169, 60, 0.28), 0 0 8px rgba(247, 208, 112, 0.2);
+}
+
+.teal-glow {
+  box-shadow: 0 0 20px rgba(13, 148, 136, 0.35), 0 0 8px rgba(20, 184, 166, 0.2);
+}
+
+.maroon-card-glow {
+  box-shadow: 0 0 25px -3px rgba(186, 28, 62, 0.25), 0 8px 24px rgba(0, 0, 0, 0.6);
+}
+
+/* Turmeric Shimmer */
+@keyframes turmericShimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+.turmeric-shimmer {
+  background: linear-gradient(90deg, #E5A93C 0%, #FFF4C2 40%, #14B8A6 60%, #E5A93C 100%);
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: turmericShimmer 7s linear infinite;
+}
+
+/* Gold Shimmer */
+@keyframes goldShimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+.gold-shimmer {
+  background: linear-gradient(90deg, #C9A24B 0%, #FFF2B2 50%, #C9A24B 100%);
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: goldShimmer 6s linear infinite;
+}
+
+/* Card Selection Glow with Lift */
+.selected-card-glow {
+  box-shadow: 0 0 16px rgba(201, 162, 75, 0.35), 0 8px 24px rgba(0, 0, 0, 0.5), inset 0 0 12px rgba(229, 195, 101, 0.08);
+  transform: translateY(-2px);
+}
+
+/* Active Beat Dynamic Pulse */
+@keyframes beatPop {
+  0% {
+    transform: scale(1);
+  }
+  30% {
+    transform: scale(1.09);
+  }
+  100% {
+    transform: scale(1.05);
+  }
+}
+
+.beat-box-active {
+  animation: beatPop 0.18s ease-out forwards;
+}
+
+/* Line Art Stroke Draw Animation */
+@keyframes drawStroke {
+  0% {
+    stroke-dashoffset: 1000;
+    opacity: 0.2;
+  }
+  60% {
+    opacity: 0.9;
+  }
+  100% {
+    stroke-dashoffset: 0;
+    opacity: 1;
+  }
+}
+
+.draw-path-anim {
+  stroke-dasharray: 1000;
+  stroke-dashoffset: 1000;
+  animation: drawStroke 3s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+.draw-path-delay-1 {
+  stroke-dasharray: 800;
+  stroke-dashoffset: 800;
+  animation: drawStroke 2.6s 0.3s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+.draw-path-delay-2 {
+  stroke-dasharray: 600;
+  stroke-dashoffset: 600;
+  animation: drawStroke 2.2s 0.6s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+/* Temple Lamp Ambient Flicker */
+@keyframes diyaFlicker {
+  0%, 100% {
+    opacity: 0.85;
+    transform: scale(1);
+    filter: drop-shadow(0 0 12px rgba(229, 169, 60, 0.6));
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.03);
+    filter: drop-shadow(0 0 20px rgba(247, 208, 112, 0.85));
+  }
+}
+
+.diya-glow-pulse {
+  animation: diyaFlicker 3s infinite ease-in-out;
+}
+
+/* Smooth Touch Snap Scrolling */
+.snap-touch-row {
+  -webkit-overflow-scrolling: touch;
+  scroll-snap-type: x mandatory;
+}
